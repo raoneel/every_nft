@@ -1,0 +1,37 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(#efefef, #cccccc);
+  margin: 0 auto;
+  font-family: sans-serif;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+#canvas {
+  margin-top: 16px;
+  border: 1px solid #333;
+}
+
+#zoom {
+  border: 1px solid #333;
+}
+
+#container {
+  width: 100%;
+  height: 100%;
+}
