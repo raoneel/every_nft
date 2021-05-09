@@ -25,7 +25,7 @@ function setup() {
 }
 //Setup a data structure that contains every block as a data object, with its width, height and "state"
 function initializeBlockData() {
-  const initBlock = {w: blockWidth, h: blockHeight, state: 0};
+  const initBlock = {w: blockWidth, h: blockHeight, index: 0};
   for(let i=0; i< numRow; i++) {
     for(let j=0; j<numRow;j ++){
       let copiedBlock = {}
@@ -51,43 +51,40 @@ function draw() {
 function drawBlockData() {
   blocks.forEach((block) => {
     push();
-    let blockColor = 255 * block.state;
-    fill(blockColor);
+    blackWhiteColorGenerator(block.index);
     rect(block.x, block.y, block.w, block.h);
     pop();
   })
 }
 
-
-//Update the state for each block (called every frame for now)
-//@THIS ALGORITHM SUCKS AND IS BROKEN -  WE NEED TO IMPROVE IT.
-//IDEALLY IT CAN GO FROM SOME BIGINT -> STATE FOR EACH BLOCK.
-let primaryBlockIndex = 0, secondaryBlockIndex = 1;
-let totalStates = 2;
-function enumerateBlockData() {
-  
-
-  let primaryBlock = blocks[primaryBlockIndex];
-  let secondaryBlock = blocks[secondaryBlockIndex];
-  if (primaryBlock.currentState >= totalStates) {
-    //Move to next primary block if ive explored all my states
-    primaryBlock.state = 0;
-    primaryBlockIndex++;
-  } else if (secondaryBlockIndex == blocks.length - 1) {
-    //All secondary blocks have been explored, change primary block state
-    secondaryBlock.state = 0;
-    secondaryBlockIndex = primaryBlockIndex == 0 ? 1 : 0;
-    primaryBlock.state += 1;
-  } else if (secondaryBlock.state >= totalStates) {
-    //Explored all states for secondary block, move on, skipping primary block
-    secondaryBlock.state = 0;
-    secondaryBlockIndex++;
-    if (secondaryBlockIndex == primaryBlockIndex) {secondaryBlockIndex++};
+// Replace with different function if you need more colors.
+// Make sure to edit MAX_INDEX to reflect correct number of colors
+function blackWhiteColorGenerator(index) {
+  if (index === 0) {
+    fill(0)
   } else {
-    //Otherwise flip the secondary block
-    secondaryBlock.state += 1;
+    fill(255);
   }
+}
 
+// Treat each block as digit in a base N number
+// where N is the number of colors per block
+const MAX_INDEX = 1;
+function enumerateBlockData() {
+  let cursor = 0;
+
+  while (true) {
+    let value = blocks[cursor].index;
+
+    if (value < MAX_INDEX) {
+      blocks[cursor].index++;
+      break;
+    } else {
+      // Carry over
+      blocks[cursor].index = 0;
+      cursor++;
+    }
+  }
 }
 
 
@@ -98,5 +95,4 @@ function windowResized() {
   cnv.style("zoom", zoomBy);
   xOffset = document.getElementById("sketch-holder").offsetLeft;
   yOffset = document.getElementById("sketch-holder").offsetTop;
-
 }
