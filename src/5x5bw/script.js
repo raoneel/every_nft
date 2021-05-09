@@ -13,7 +13,9 @@ let blockWidth= w / numRow;
 let blockHeight = h / numRow;
 let blocks =[];
 
-let framesPerSecond = 10;
+const framesPerSecond = 10;
+const BASE = 3;
+const MAX_INDEX = BASE - 1;
 
 //P5 Setup function
 function setup() {
@@ -21,18 +23,24 @@ function setup() {
   cnv.parent('sketch-holder');
   frameRate(framesPerSecond);    
   windowResized();
-  initializeBlockData();
+  let initNum = intToBase(Math.random() * 20000)
+  initializeBlockData(initNum);
 }
+
 //Setup a data structure that contains every block as a data object, with its width, height and "state"
-function initializeBlockData() {
-  const initBlock = {w: blockWidth, h: blockHeight, index: 0};
+function initializeBlockData(initState) {
+  let initIndices = initState ? initState : [];
+  const initBlock = {w: blockWidth, h: blockHeight};
+  let blockIndex = 0;
   for(let i=0; i< numRow; i++) {
     for(let j=0; j<numRow;j ++){
       let copiedBlock = {}
       Object.assign(copiedBlock, initBlock);
       copiedBlock["x"] = j * blockWidth;
       copiedBlock["y"] = i * blockHeight;
+      copiedBlock.index = initIndices[blockIndex] ? initIndices[blockIndex] : 0;
       blocks.push(copiedBlock);
+      blockIndex++;
     }
   }
   console.log(blocks);
@@ -41,7 +49,6 @@ function initializeBlockData() {
 //Draw each block and enumerate the next state
 function draw() {
   background(50);
-  ellipse(50,50,50,50);
   noStroke();
   drawBlockData();
   enumerateBlockData();
@@ -51,7 +58,7 @@ function draw() {
 function drawBlockData() {
   blocks.forEach((block) => {
     push();
-    blackWhiteColorGenerator(block.index);
+    fillColor(block.index);
     rect(block.x, block.y, block.w, block.h);
     pop();
   })
@@ -59,17 +66,24 @@ function drawBlockData() {
 
 // Replace with different function if you need more colors.
 // Make sure to edit MAX_INDEX to reflect correct number of colors
-function blackWhiteColorGenerator(index) {
-  if (index === 0) {
-    fill(0)
-  } else {
-    fill(255);
+function fillColor(index) {
+  switch (index) {
+    case 0:
+      fill(0);
+      break;
+    case 1:
+      fill(255)
+      break;
+    case 2:
+      fill(125);
+      break;
+    default:
+      noFill();
   }
 }
 
-// Treat each block as digit in a base N number
+// Treat INDEX of each block as digit in a base N number
 // where N is the number of colors per block
-const MAX_INDEX = 1;
 function enumerateBlockData() {
   let cursor = 0;
 
@@ -87,6 +101,20 @@ function enumerateBlockData() {
   }
 }
 
+
+
+//Helper functions
+
+//Convert int to arbitarry bin
+function intToBase(i) {
+  let indices = [];
+  while ( i > 0) { 
+    indices.push(i % BASE);
+    i = Math.floor(i / BASE);
+    //console.log(i);
+  }
+  return indices;
+}
 
 //resize function, by @pitaru
 function windowResized() {
