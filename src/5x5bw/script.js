@@ -9,32 +9,36 @@ let w = 500;
 let h = w;
 let numRow = 5;
 let numBlocks = numRow * numRow;
-let blockWidth= w / numRow;
+let blockWidth = w / numRow;
 let blockHeight = h / numRow;
-let blocks =[];
+let blocks = [];
+let done = false;
 
 const framesPerSecond = 10;
 const BASE = 3;
 const MAX_INDEX = BASE - 1;
+const START_TIME = 1620791847000;
 
 //P5 Setup function
 function setup() {
   cnv = createCanvas(w, h);
-  cnv.parent('sketch-holder');
-  frameRate(framesPerSecond);    
+  cnv.parent("sketch-holder");
+  frameRate(framesPerSecond);
   windowResized();
-  let initNum = intToBase(Math.random() * 20000)
+  let initNum = intToBase(
+    Math.floor((Date.now() - START_TIME) / framesPerSecond / 1000)
+  );
   initializeBlockData(initNum);
 }
 
 //Setup a data structure that contains every block as a data object, with its width, height and "state"
 function initializeBlockData(initState) {
   let initIndices = initState ? initState : [];
-  const initBlock = {w: blockWidth, h: blockHeight};
+  const initBlock = { w: blockWidth, h: blockHeight };
   let blockIndex = 0;
-  for(let i=0; i< numRow; i++) {
-    for(let j=0; j<numRow;j ++){
-      let copiedBlock = {}
+  for (let i = 0; i < numRow; i++) {
+    for (let j = 0; j < numRow; j++) {
+      let copiedBlock = {};
       Object.assign(copiedBlock, initBlock);
       copiedBlock["x"] = j * blockWidth;
       copiedBlock["y"] = i * blockHeight;
@@ -43,7 +47,6 @@ function initializeBlockData(initState) {
       blockIndex++;
     }
   }
-  console.log(blocks);
 }
 
 //Draw each block and enumerate the next state
@@ -51,7 +54,10 @@ function draw() {
   background(50);
   noStroke();
   drawBlockData();
-  enumerateBlockData();
+
+  if (!done) {
+    enumerateBlockData();
+  }
 }
 
 //Just draw each block based on the state within blocks
@@ -61,7 +67,7 @@ function drawBlockData() {
     fillColor(block.index);
     rect(block.x, block.y, block.w, block.h);
     pop();
-  })
+  });
 }
 
 // Replace with different function if you need more colors.
@@ -72,10 +78,10 @@ function fillColor(index) {
       fill(0);
       break;
     case 1:
-      fill(255)
+      fill(125);
       break;
     case 2:
-      fill(125);
+      fill(255);
       break;
     default:
       noFill();
@@ -88,6 +94,13 @@ function enumerateBlockData() {
   let cursor = 0;
 
   while (true) {
+    // Reached the end. Need to undo the last step.
+    if (cursor >= blocks.length) {
+      blocks.forEach((aBlock) => (aBlock.index = MAX_INDEX));
+      done = true;
+      break;
+    }
+
     let value = blocks[cursor].index;
 
     if (value < MAX_INDEX) {
@@ -101,17 +114,14 @@ function enumerateBlockData() {
   }
 }
 
-
-
 //Helper functions
 
-//Convert int to arbitarry bin
+//Convert int to arbitary bin
 function intToBase(i) {
   let indices = [];
-  while ( i > 0) { 
+  while (i > 0) {
     indices.push(i % BASE);
     i = Math.floor(i / BASE);
-    //console.log(i);
   }
   return indices;
 }
