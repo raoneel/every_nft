@@ -5,17 +5,17 @@ let yOffset = 0;
 let mx = 0;
 let my = 0;
 
-let w = 500;
+let w = 480;
 let h = w;
-let numRow = 5;
+let numRow = 16;
 let numBlocks = numRow * numRow;
 let blockWidth = w / numRow;
 let blockHeight = h / numRow;
 let blocks = [];
 let done = false;
 
-const framesPerSecond = 10;
-const BASE = 3;
+const framesPerSecond = 16;
+const BASE = 2;
 const MAX_INDEX = BASE - 1;
 const START_TIME = 1620791847000;
 
@@ -75,13 +75,10 @@ function drawBlockData() {
 function fillColor(index) {
   switch (index) {
     case 0:
-      fill(0);
+      fill(255);
       break;
     case 1:
-      fill(125);
-      break;
-    case 2:
-      fill(255);
+      fill(0);
       break;
     default:
       noFill();
