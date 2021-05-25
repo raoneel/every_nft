@@ -17,7 +17,7 @@ let done = false;
 const framesPerSecond = 8;
 const BASE = 2;
 const MAX_INDEX = BASE - 1;
-const START_TIME = 1620791847000;
+const START_TIME = 1621641600000;
 
 //P5 Setup function
 function setup() {
@@ -62,7 +62,7 @@ function draw() {
 
 //Just draw each block based on the state within blocks
 function drawBlockData() {
-  blocks.forEach((block) => {
+  blocks.forEach(block => {
     push();
     fillColor(block.index);
     rect(block.x, block.y, block.w, block.h);
@@ -93,7 +93,7 @@ function enumerateBlockData() {
   while (true) {
     // Reached the end. Need to undo the last step.
     if (cursor >= blocks.length) {
-      blocks.forEach((aBlock) => (aBlock.index = MAX_INDEX));
+      blocks.forEach(aBlock => (aBlock.index = MAX_INDEX));
       done = true;
       break;
     }
